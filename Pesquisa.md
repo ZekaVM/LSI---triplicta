@@ -15,9 +15,6 @@ Interfaces são regiões no espaço que separam duas regiões distintas (fases).
   <img src="assets/img/air-water.jpg">
   <figcaption><b>Figura 1 - </b>A interface ar água vista de perto (Reprodução de P. Jungwirth, <i>Nature</i>, 168–169, <b>2011</b>)</figcaption>
 </p>
-<p align= "center">
-<b>Figura 1 - </b>A interface ar água vista de perto (Reprodução de P. Jungwirth, <i>Nature</i>, 168–169, <b>2011</b>)
-</p>
 
 <p style="text-align: justify;">
 Uma vez que é a diferença de interação entre as moléculas e as duas (ou mais) fases que faz com que haja excesso (ou depleção) de moléculas nas interfaces, a natureza dessas interações é que determina as propriedades interfaciais. Assim, para diferentes interfaces, como a interface água/ar, óleo/água, entre tantas outras, a adsorção de moléculas varia drasticamente com a natureza das fases e dos solutos. Um grupo de interfaces de grande interesse industrial e biológico são as interfaces formadas pela associação de moléculas anfifílicas, como os surfactantes e os lipídeos.
