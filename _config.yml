@@ -20,15 +20,16 @@ author: Filipe Lima
 ###############################################
 
 navbar-links:
-  Grupo de Pesquisa: "LSI"
+  Pesquisa: "LSI"
   Membros:
     - Pesquisador Principal: "FSL"
     - Pós-Graduandos: "PPG"
     - Iniciação Científica: "IC"
-  Pesquisa: "Pesquisa"
+  Publicações: "Publicacao"
   Ensino:
     - Termodinâmica Clássica: "TC"
     - Termodinâmica Estatística: "TE"
+    - Química Geral 1: "QG1"
 
 ################
 # --- Logo --- #
