@@ -7,6 +7,7 @@ subtitle: Filipe Lima
 img {
   display: block;
   margin: auto;
+  width: 50%
 }
 
 <img src="assets/img/rFSL.png">
