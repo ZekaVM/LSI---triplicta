@@ -8,7 +8,9 @@ O Laboratório de Sistemas Interfaciais é coordenado pelo Prof. Filipe Lima e o
 
 Interfaces são regiões no espaço que separam duas regiões distintas (fases). Devido ao fato de solutos interagirem diferentemente com as duas regiões, a concentração de espécies próximas às interfaces é invariavelmente diferente das concentrações em seio de solução (bulk). Logo, a composição das interfaces e, consequentemente, as propriedades das interfaces diferem drasticamente das propriedades no bulk, tornando as interfaces regiões especiais no espaço.
 
+
 ![Interface](assets/img/air-water.jpg)
+Fig. 1 - A interface ar água vista de perto
 
 Uma vez que é a diferença de interação entre as moléculas e as duas (ou mais) fases que faz com que haja excesso (ou depleção) de moléculas nas interfaces, a natureza dessas interações é que determina as propriedades interfaciais. Assim, para diferentes interfaces, como a interface água/ar, óleo/água, entre tantas outras, a adsorção de moléculas varia drasticamente com a natureza das fases e dos solutos. Um grupo de interfaces de grande interesse industrial e biológico são as interfaces formadas pela associação de moléculas anfifílicas, como os surfactantes e os lipídeos.
 
