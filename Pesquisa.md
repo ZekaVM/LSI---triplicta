@@ -4,12 +4,11 @@ title: Interfaces
 subtitle: Regiões especiais do espaço
 ---
 
-.justified-text{
+<p style="text-align: justify;">
 O Laboratório de Sistemas Interfaciais é coordenado pelo Prof. Filipe Lima e o foco principal do grupo é no estudo de sistemas que possuem interfaces.
 
 Interfaces são regiões no espaço que separam duas regiões distintas (fases). Devido ao fato de solutos interagirem diferentemente com as duas regiões, a concentração de espécies próximas às interfaces é invariavelmente diferente das concentrações em seio de solução (bulk). Logo, a composição das interfaces e, consequentemente, as propriedades das interfaces diferem drasticamente das propriedades no bulk, tornando as interfaces regiões especiais no espaço.
-text-align: justify;
-}
+</p>
 
 
 ![Interface](assets/img/air-water.jpg)
