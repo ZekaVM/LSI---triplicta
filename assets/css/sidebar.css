@@ -4,10 +4,10 @@
   width: 200px;       /* Set a fixed width */
   position: fixed;    /* Stay in place on scroll */
   left: 0;
-  top: 100px;
+  top: 300px;
   background-color: "#FFFFFF";
-  padding-top: 50px;
-  marging-top: 200px;
+  padding-top: 300px;
+  marging-top: 300px;
 }
 
 /* Remove list bullets */
