@@ -10,19 +10,8 @@ d. djejrj e rjjrnendnisieiek
 
 
 <ul class="nav-list">
-  <li><a href="#">Home</a></li>
-  <li><a href="#">About</a></li>
-  <li><a href="#">Services</a></li>
-  <li><a href="#">Contact</a></li>
+  <li><a vref="#">Home</a></li>
+  <li><a vref="#">About</a></li>
+  <li><a vref="#">Services</a></li>
+  <li><a vref="#">Contact</a></li>
 </ul>
-
-<div class="container">
-  <ul class="my-list">
-    <li>Item 1</li>
-    <li>Item 2</li>
-    <li>Item 3</li>
-  </ul>
-  <div class="content">
-    <p> Isso aqui é a parte do texto, não sei se vai funcionar assim...</p>
-  </div>
-</div>
