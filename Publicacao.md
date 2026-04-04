@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Publicações do LSI
+title: Publicações
 subtitle: Lista das publicações que envolvem membros e ex-membros do LSI
 ---
 
