@@ -3,7 +3,7 @@ layout: page
 title: Publicações
 subtitle: Lista das publicações que envolvem membros e ex-membros do LSI
 ---
-
+<p class="jt">
 31 – FEITOSA, SIDNEY G. D. ; DA SILVA, SIDIANE B. ; LINS, ILÁRIA M. S. ; DA SILVA'JR, JOSENILDO A. ; SANTOS, RUTH C. A. ; <b>LIMA, FILIPE DA S.</b> ; ARAÚJO, ALICE V. ; DOS ANJOS, JANAÍNA V. . Unveiling the Potential of the Thiopyrimidinone Nucleus as a Vasoactive Scaffold: An Approach to Developing Novel Alpha-1 Adrenoceptor Antagonists. ChemistrySelect, v. 10, p. 1-11, 2025.
 
 30 – MORTARA, LAURA ; CORTEZ, MATHEUS P. ; Lacerda, Caroline D. ; CARRETERO, GUSTAVO P. B. ; SCHREIER, SHIRLEY ; CHAIMOVICH, HERNAN ; <b>Lima, Filipe S.</b> ; CUCCOVIA, IOLANDA M. . Micellization of Zwitterionic Surfactant with Opposite Dipoles is Differently Affected by Anions. LANGMUIR, v. 41, p. 9480-9487, 2025
@@ -66,3 +66,4 @@ subtitle: Lista das publicações que envolvem membros e ex-membros do LSI
 2 – J. Zukerman ; REIS, K. C. A. ; N L C Domingues ; OLIVATO, P. R. ; RITNER, R. ; <b>LIMA, F. S.</b> Crystal structure of N-phenyl-3-[2-(4 '-chlorophenylthio)propanoyl]-2-azetidinone, C18H16ClNO2S. Zeitschrift fur Kristallographie. New Crystal Structures, Alemanha, v. 221, p. 163-164, 2006.
 
 1 – J. Zukerman ; N L C Domingues ; OLIVATO, P. R. ; MONDINO, M. G. ; REIS, K. C. A. ; RITNER, R. ; <b>LIMA, F. S.</b> . Crystal structure of N-methoxy-N-methyl-2-[(4 '-nitrophenyl)sulfinyl]-propanamide, C11H14N2O5S. Zeitschrift fur Kristallographie. New Crystal Structures, Alemanhã, v. 221, p. 161-162, 2006.
+</p>
