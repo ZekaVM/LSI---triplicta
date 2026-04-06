@@ -36,11 +36,20 @@
 
 /* Equation number on the right */
 .eq-number {
-  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 20px;    
+}
+
+.eq-number span {
+  height: 1.6em;
+  display: flex;
+  align-items: center;
   font-weight: bold;
   font-style: italic;
   color: #d12f2f;
-  white-space: nowrap;  
+  white-space: nowrap;
 }
 
 /* Per-line highlight inside mathbox */
