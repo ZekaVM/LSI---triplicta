@@ -49,11 +49,20 @@
   font-weight: bold; /* optional */
 }
 
-/* Fix extra vertical spacing from MathJax */
+/* ========================= */
+/* Fix MathJax spacing inside mathbox */
+
+/* 1. Remove big vertical margins from $$ ... $$ */
+.mathbox mjx-container[jax="CHTML"][display="true"] {
+  margin: 0 !important;
+}
+
+/* 2. Tighten internal MathJax layout */
 .mathbox .mjx-chtml {
-  display: inline-block;
-  margin: 0;
-  padding: 0;
-  line-height: 1em;  /* tighter line spacing */
-  vertical-align: top;
+  line-height: 1em !important;
+}
+
+/* 3. (Optional but safe) ensure compact rendering */
+.mathbox mjx-container {
+  padding: 0 !important;
 }
