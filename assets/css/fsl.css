@@ -5,10 +5,10 @@
 
 /* Boxed formula style */
 .mathbox {
-  background-color: #f5f5f5;  /* light grey */
-  padding: 8px 12px;
-  border-radius: 6px;
-  display: inline-block;
-  margin: 10px 0;
-  font-size: 1.1em;
-}
+  background-color: #e0e0e0;  /* light grey background */
+  border: 2px solid #888888;  /* darker grey border */
+  border-radius: 10px;        /* rounded corners */
+  padding: 12px 15px;         /* space around the formula */
+  display: inline-block;       /* shrink to formula width */
+  margin: 10px 0;             /* vertical spacing from other content */
+  font-size: 1.15em;          /* slightly larger font */
