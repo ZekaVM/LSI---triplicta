@@ -3,12 +3,22 @@
   text-justify: inter-word;
 }
 
-/* Boxed formula style */
+/* ========================= */
+/* Boxed formulas “formula card” style */
 .mathbox {
-  background-color: #e0e0e0;  /* light grey background */
-  border: 2px solid #888888;  /* darker grey border */
-  border-radius: 10px;        /* rounded corners */
-  padding: 12px 15px;         /* space around the formula */
-  display: inline-block;       /* shrink to formula width */
-  margin: 10px 0;             /* vertical spacing from other content */
-  font-size: 1.15em;          /* slightly larger font */
+  background-color: #f0f0f0;       /* soft light grey background */
+  border: 2px solid #888888;       /* medium grey border */
+  border-radius: 12px;             /* smooth round corners */
+  padding: 12px 16px;              /* space inside the box */
+  display: inline-block;            /* shrink box to formula width */
+  margin: 12px 0;                   /* vertical spacing between formulas */
+  font-size: 1.15em;                /* slightly larger font for readability */
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.15); /* subtle shadow for depth */
+  transition: background-color 0.3s, box-shadow 0.3s; /* optional hover effect */
+}
+
+/* Optional: make formula highlight on hover */
+.mathbox:hover {
+  background-color: #e0e0e0;
+  box-shadow: 3px 3px 8px rgba(0,0,0,0.2);
+}
