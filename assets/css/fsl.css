@@ -11,7 +11,7 @@
   display: flex;
   align-items: center;              /* vertically align box and number */
   justify-content: space-between;   /* box on left, number on right */
-  margin: 12px auto;                /* vertical spacing (keep center alignment) */
+  margin: 6px auto;                /* vertical spacing (keep center alignment) */
   max-width: 800px;                 /* optional: limit max width */
 }
 
@@ -21,7 +21,7 @@
   border-radius: 12px;             /* smooth round corners */
   padding: 12px 16px;              /* space inside the box */
   display: block;            /* shrink box to formula width */
-  margin: 12px auto;                   /* vertical spacing between formulas */
+  margin: 0;                   /* vertical spacing between formulas */
   font-size: 1.15em;                /* slightly larger font for readability */
   box-shadow: 2px 2px 6px rgba(0,0,0,0.15); /* subtle shadow for depth */
   transition: background-color 0.3s, box-shadow 0.3s; /* optional hover effect */
