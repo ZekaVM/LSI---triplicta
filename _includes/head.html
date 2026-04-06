@@ -1,7 +1,10 @@
 <script>
   window.MathJax = {
     tex: {
-      inlineMath: [['$', '$'], ['\\(', '\\)']]
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      macros: {
+        boxeq: ["\\class{mathbox}{#1}", 1]  /* new shortcut for boxed formulas */
+      }
     }
   };
 </script>
