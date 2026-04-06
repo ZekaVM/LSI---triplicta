@@ -48,6 +48,7 @@
   font-style: italic;
   line-height: 1.4em;          /* controls spacing between numbers */
   text-align: left;
+  color: black;
 }
 
 /* Per-line highlight inside mathbox */
