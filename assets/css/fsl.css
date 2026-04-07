@@ -111,6 +111,11 @@
     }
 }
 
+/*sidebar toggle off for desktop */
+#menu-toggle {
+  display: none;
+}
+
 /* sidebar for phone */
 /* Mobile sidebar toggle */
 @media (max-width: 768px) {
