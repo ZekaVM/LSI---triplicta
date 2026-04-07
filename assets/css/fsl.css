@@ -115,6 +115,18 @@
     }
 }
 
+/* title for phone */
+/* Push page title below header on mobile */
+@media (max-width: 768px) {
+  /* Adjust page title spacing */
+  main.container-md h1,
+  main.container-fluid h1,
+  main.container-md .page-header,
+  main.container-fluid .page-header {
+      margin-top: 60px;  /* adjust to match header height */
+  }
+}
+
 /* sidebar for phone */
 /* Mobile sidebar toggle */
 @media (max-width: 768px) {
