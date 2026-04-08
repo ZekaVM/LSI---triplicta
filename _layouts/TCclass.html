@@ -1,0 +1,55 @@
+---
+layout: base
+---
+
+{% include header.html type="page" %}
+
+<main class="{% if page.full-width %} container-fluid {% else %} container-md {% endif %}">
+  <div class="row">
+    <div class="{% if page.full-width %} col {% else %} col-xl-8 offset-xl-2 col-lg-10 offset-lg-1 {% endif %}">
+      {% if page.before-content %}
+        <div class="before-content">
+          {% for file in page.before-content %}
+            {% include {{ file }} %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+     <button id="menu-toggle">☰</button>
+     <nav class="side-nav">
+        <ul>
+          <li><a href="/LSI/Aulas/TC/A1">Sistemas</a></li>
+          <li><a href="/LSI/Aulas/TC/A2">Gases Ideais</a></li>
+          <li><a href="/LSI/Aulas/TC/A3">Gases Reais</a></li>
+          <li><a href="/LSI/Aulas/TC/A4">Ponto Crítico</a></li>
+          <li><a href="/LSI/Aulas/TC/A5">Aula 5</a></li>
+          <li><a href="/LSI/Aulas/TC/A6">Aula 6</a></li>
+          <li><a href="/LSI/Aulas/TC/A7">Aula 7</a></li>
+          <li><a href="/LSI/Aulas/TC/A8">Aula 8</a></li>
+          <li><a href="/LSI/Aulas/TC/A9">Aula 9</a></li>
+          <li><a href="/LSI/Aulas/TC/A10">Aula 10</a></li>
+          <li><a href="/LSI/Aulas/TC/A11">Aula 11</a></li>
+          <li><a href="/LSI/Aulas/TC/A12">Aula 12</a></li>
+          <li><a href="/LSI/Aulas/TC/A13">Aula 13</a></li>
+          <li><a href="/LSI/Aulas/TC/A14">Aula 14</a></li>
+          <li><a href="/LSI/Aulas/TC/A15">Aula 15</a></li>
+          <li><a href="/LSI/Aulas/TC/A16">Aula 16</a></li>
+          <li><a href="/LSI/Aulas/TC/A17">Aula 17</a></li>
+          <li><a href="/LSI/Aulas/TC/A18">Aula 18</a></li>
+        </ul>
+      </nav>
+
+      {{ content }}
+
+      {% if page.after-content %}
+        <div class="after-content">
+          {% for file in page.after-content %}
+            {% include {{ file }} %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% include comments.html %}
+    </div>
+  </div>
+</main>
