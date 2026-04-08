@@ -93,6 +93,8 @@
   height: 300px;
   width: auto;
   margin-left: 10px;
+  flex-shrink: 0;
+  align-self: center;
 }
 
   /* equations for phone */
