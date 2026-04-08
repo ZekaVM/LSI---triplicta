@@ -123,6 +123,18 @@
   }
 }
 
+/* box+numb+img*/
+@media (max-width: 600px) {
+  .eq-with-img {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .eq-with-img img {
+    margin-top: 8px;
+  }
+}
+
 /* text for phone */
 @media (max-width: 768px) {
   body {
