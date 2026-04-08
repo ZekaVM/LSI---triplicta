@@ -74,6 +74,19 @@
   padding: 0 !important;
 }
 
+/* Special layout ONLY when image is present */
+.eq-with-img {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Make MathJax behave inside flex */
+.eq-with-img .MathJax_Display {
+  flex: 1;
+  margin: 0;
+}
+
   /* equations for phone */
 @media (max-width: 768px) {
   .mathbox {
