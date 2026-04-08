@@ -21,8 +21,8 @@ layout: null
   /* common CSS variables */
   /* --body-font: 'Lora', 'Times New Roman', serif;
      --header-font: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; */
-  --body-font: 'Merriweather', serif;
-  --header-font: 'Poppins', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --body-font: 'Mulish', sans-serif;
+  --header-font: 'Poppins', 'Montserrat', sans-serif;
   --mid-col: #808080;
 }
 
