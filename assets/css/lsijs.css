@@ -1,10 +1,10 @@
 .toolbox {
   width: 100%;
-  max-width: 800px;          /* match your content width */
+  max-width: 760px;          /* match your content width */
   margin: 2rem auto;
   padding: 1.5rem;
 
-  border-radius: 16px;
+  border-radius: 10px;
   background: #f8f9fb;
   border: 1px solid #e0e0e0;
 
