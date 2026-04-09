@@ -1,6 +1,7 @@
 .toolbox {
   width: 100%;
   max-width: 760px;          /* match your content width */
+  height: auto;
   margin: 2rem auto;
   padding: 1.5rem;
 
@@ -49,4 +50,10 @@
   height: 250px;     /* fixed height */
   border: 1px solid #ccc;
   border-radius: 8px;
+}
+
+/* Optional: style for vertex output */
+.vertex-output {
+  font-weight: bold;
+  color: #003366;
 }
