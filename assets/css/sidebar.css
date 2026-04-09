@@ -28,7 +28,7 @@
 
 /* Style the links */
 .side-nav li a {
-  display: block;     /* Makes the whole area clickable */
+  display: inline-block;     /* Makes the whole area clickable */
   width: 150px;
   color: black;
   padding: 10px 15px;
