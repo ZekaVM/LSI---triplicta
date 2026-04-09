@@ -5,7 +5,7 @@
 
 /* shortcut to justify paragraphs*/
 .jt {
-  text-align: left;  
+  text-align: left;
 }
 
 /* ========================= */
@@ -35,7 +35,7 @@
 
 /* Optional: make formula highlight on hover */
 .mathbox:hover {
-  background-color: #e0e0e0;
+  background-color: #FFFBF9;
   box-shadow: 3px 3px 8px rgba(0,0,0,0.2);
 }
 
