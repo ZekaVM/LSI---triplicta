@@ -56,7 +56,7 @@
 }
 
 .side-nav:hover li a {
-  white-space: normal;
+  /*white-space: normal;*/
   text-align: center;
 }
 
