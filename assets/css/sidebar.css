@@ -39,12 +39,6 @@
   white-space: nowrap;  
 }
 
-/* Show only first letter in collapsed sidebar */
-.side-nav li a::first-letter {
-  display: inline-block;
-  font-weight: bold;
-}
-
 .side-nav:hover li a {
   white-space: normal;      /* allow wrapping */
   overflow: visible;        /* show full text */
@@ -53,14 +47,23 @@
   overflow-wrap: break-word;
 }
 
-/* Show full text in expanded mode */
-.side-nav:hover li a::first-letter {
-  display: inline;          /* restore normal text */
-}
-
 /* Hover effect */
 .side-nav li a:hover {
   background-color: #FA8072;
+}
+
+/* Text span inside link */
+.side-nav li a .text {
+  display: inline-block;
+  white-space: nowrap;       /* keep one line in collapsed */
+  overflow: hidden;
+  max-width: 2ch;            /* show only first letter */
+  transition: max-width 0.7s ease;
+}
+
+.side-nav:hover li a .text {
+  max-width: 100%;            /* reveal full text */
+  white-space: normal;        /* allow wrapping */
 }
 
 body.has-sidebar footer {
