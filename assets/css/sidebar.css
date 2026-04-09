@@ -30,7 +30,7 @@
 .side-nav li a {
   display: block;     /* Makes the whole area clickable */
   width: %100;
-  color: rgba(0,0,0,0.5);
+  color: rgba(0,0,0,0.25);
   padding: 10px 15px;
   text-decoration: none;
   box-sizing: border-box;
