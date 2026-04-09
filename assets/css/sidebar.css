@@ -1,7 +1,7 @@
 /* Sidebar Container */
 .side-nav {
   height: 100%;       /* Full-height */
-  width: 50px;       /* collapsed width */
+  width: 140px;       /* collapsed width */
   position: fixed;    /* Stay in place on scroll */
   left: 0px;
   top: 0px;
@@ -67,7 +67,7 @@
 }
 
 body.has-sidebar footer {
-  margin-left: 50px;
+  margin-left: 140px;
   transition: margin-left 0.7s ease;
 }
 
