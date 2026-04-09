@@ -52,18 +52,6 @@
   background-color: #FA8072;
 }
 
-/* Text span inside link */
-.side-nav li a .text {
-  display: inline-block;
-  white-space: nowrap;       /* keep one line in collapsed */
-  overflow: hidden;
-}
-
-.side-nav:hover li a .text {
-  max-width: 100%;            /* reveal full text */
-  white-space: normal;        /* allow wrapping */
-}
-
 body.has-sidebar footer {
   margin-left: 75px;
   transition: margin-left 0.7s ease;
