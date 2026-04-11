@@ -1,3 +1,15 @@
+.aula-container h2 {
+  font-size: 1.8em;
+  margin-top: 50px;
+  border-bottom: 2px solid #ddd;
+}
+
+.aula-container h3 {
+  font-size: 1.4em;
+  margin-top: 30px;
+}
+
+
 /*sidebar toggle off for desktop */
 #menu-toggle {
   display: none;
