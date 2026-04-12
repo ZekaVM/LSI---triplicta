@@ -48,7 +48,7 @@
   overflow-wrap: break-word;
   color: rgba(0,0,0,1.0);
   width: 100%;
-  display: inline;
+  display: block;
 }
 
 /* Hover effect */
