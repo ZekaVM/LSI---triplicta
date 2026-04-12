@@ -22,8 +22,7 @@
 }
 
 @media (max-width: 768px) {
-  main.container-md,
-  main.container-fluid {
-    margin-top: 250px;   /* adjust to header height */
+  .intro-header {
+    margin-top: 250px;   /* adjust to your navbar height */
   }
 }
