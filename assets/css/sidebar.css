@@ -50,6 +50,13 @@
   display: block;
 }
 
+.side-nav:hover li a .text {
+  display: block;
+  max-width: none;
+  white-space: normal;
+  overflow: visible;
+}
+
 /* Hover effect */
 .side-nav li a:hover {
   background-color: #FA8072;
