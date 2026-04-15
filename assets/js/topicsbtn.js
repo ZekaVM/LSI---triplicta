@@ -1,12 +1,7 @@
 $(document).ready(function() {
-  $(document).on("click", "#topics-toggle", function() {
-    $(".side-nav").toggleClass("active");
-  });
-});
 
-$(document).ready(function() {
   $(document).on("click", "#topics-toggle", function(e) {
-    e.stopPropagation(); // prevent immediate closing
+    e.stopPropagation(); // prevents immediate closing
     $(".side-nav").toggleClass("active");
   });
 
@@ -21,4 +16,5 @@ $(document).ready(function() {
       sidebar.removeClass("active");
     }
   });
+
 });
