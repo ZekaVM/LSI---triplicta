@@ -8,7 +8,7 @@
 
   {% if include.show_topics_button %}
     <button id="topics-toggle" class="topics-btn d-xl-none" type="button">
-      📚
+      {{ page.topics_label | default: "Tópicos" }}
     </button>
   {% endif %}
 
