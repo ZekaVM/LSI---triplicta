@@ -30,10 +30,10 @@
 @media (max-width: 768px) {
   .topics-btn {
     background: transparent;
-    border: none;
+    border: 2px solid black;
     font-size: 18px;
     margin-right: 10px;
-    color: inherit;
+    color: white;
   }
 }
 
