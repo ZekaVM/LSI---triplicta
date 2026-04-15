@@ -6,8 +6,8 @@
     <a class="navbar-brand" href="{{ '/' | absolute_url }}">{{ site.title }}</a>
   {%- endif -%}
 
-  {% if page.show-topics-button %}
-    <button id="topics-toggle" class="topics-btn" type="button">
+  {% if page["show-topics-button"] %}
+    <button id="topics-toggle" class="topics-btn d-xl-none" type="button">
       📚
     </button>
   {% endif %}
