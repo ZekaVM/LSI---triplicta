@@ -1,10 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
   const btn = document.getElementById("topics-toggle");
-  const sidebar = document.querySelector(".side-nav");
 
-  if (!btn || !sidebar) return;
+  if (!btn) {
+    console.log("Button NOT found");
+    return;
+  }
+
+  console.log("Button found");
 
   btn.addEventListener("click", function() {
-    sidebar.classList.toggle("active");
+    console.log("CLICK WORKED");
   });
 });
