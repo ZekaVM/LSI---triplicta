@@ -187,3 +187,43 @@
   font-weight: bold;
   margin-bottom: 15px;
 }
+
+/* Ajustes do Player */
+.jsbox-player-bar {
+  display: flex;
+  width: 100%;
+  gap: 15px;
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+.jsbox-scrubber {
+  flex: 1 1 auto; 
+  min-width: 0;   
+  width: 100%;
+  cursor: pointer;
+}
+
+/* Estilo para Legendas de Gráficos */
+.jsbox-legend {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  font-size: 0.8rem;
+  margin-top: 8px;
+  color: #555;
+  font-weight: 600;
+}
+
+.jsbox-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.jsbox-color-box {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  display: inline-block;
+}
