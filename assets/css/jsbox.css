@@ -7,11 +7,14 @@
   border-radius: rem10px;
   background: #E6F2FF;
   border: 2px solid #003366;
-
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-
   font-family: inherit;
   font-weight: inherit;
+  display: flow-root;
+}
+
+.toolbox > * {
+  background: yellow;
 }
 
 .toolbox > *:first-child {
