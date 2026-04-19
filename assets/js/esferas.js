@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
   let velocityData = [];   
   let frequencyData = [];
   let histData = [];
+  let simulationHistory = [];
 
   let theoreticalMeanV = 0;
   let velocityMaxY = 10;
@@ -249,18 +250,19 @@ document.addEventListener('DOMContentLoaded', function() {
     frequencyMaxY = maxFreq > 0 ? maxFreq * 1.1 : 10;
 
     // --- CÁLCULO DA MÉDIA DOS 80% FINAIS ---
+    let avg = 0; 
     if (frequencyData.length > 5) {
       const startIdx = Math.floor(frequencyData.length * 0.2);
       const last80 = frequencyData.slice(startIdx);
       
       const sum = last80.reduce((acc, d) => acc + d.count, 0);
-      const avg = sum / last80.length;
+      avg = sum / last80.length;
       
       // Exibir o resultado no HTML
-      document.getElementById('val-avg-freq').innerText = avg.toFixed(2);
+      const avgSpan = document.getElementById('val-avg-freq');
+      if (avgSpan) avgSpan.innerText = avg.toFixed(2);
     }
-
-    // --- LÓGICA DO HISTÓRICO DE FREQUENCIAS---
+    
     const currentN = document.getElementById('inp-n1').value;
     const currentT = document.getElementById('inp-T').value;
     const currentM = document.getElementById('inp-m1').value;
@@ -276,14 +278,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Atualiza a interface
     const historyContainer = document.getElementById('history-box-content');
-    historyContainer.innerHTML = simulationHistory.map((sim, index) => `
-      <div style="font-size: 0.85em; border-bottom: ${index === simulationHistory.length - 1 ? 'none' : '1px solid #eee'}; padding: 4px 0;">
-        <span style="color: ${index === 0 ? '#ff9800' : '#888'}; font-weight: bold;">
-          ${index === 0 ? 'ATUAL' : 'Anterior'}
-        </span>: 
-        N=${sim.n}, T=${sim.t}, m=${sim.m} → <b>f=${sim.f}</b>
-      </div>
-    `).join('');
+    if (historyContainer) {
+      historyContainer.innerHTML = simulationHistory.map((sim, index) => `
+        <div style="font-size: 0.85em; border-bottom: ${index === simulationHistory.length - 1 ? 'none' : '1px solid #eee'}; padding: 4px 0;">
+          <span style="color: ${index === 0 ? '#ff9800' : '#888'}; font-weight: bold;">
+            ${index === 0 ? 'ATUAL' : 'Anterior'}
+          </span>: 
+          N=${sim.n}, T=${sim.t}, m=${sim.m} &rarr; <b>f=${sim.f}</b>
+        </div>
+      `).join('');
+    }
     
     isCalculating = false;
     btnRun.disabled = false;
