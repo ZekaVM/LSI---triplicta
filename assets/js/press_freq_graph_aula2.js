@@ -141,19 +141,54 @@ function iniciarLaboratorioGraficos() {
             }
         });
     }
+function desenharGraficoFreq(xData, yData, labelX) {
+        const ctx = document.getElementById('chart-freq').getContext('2d');
+        if (chartFreqInstance) chartFreqInstance.destroy();
+
+        // Une o X e o Y no formato de coordenadas reais: {x: 100, y: 7.8}
+        const dadosReais = xData.map((xVal, index) => ({ x: xVal, y: parseFloat(yData[index]) }));
+
+        chartFreqInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                // Não usamos mais 'labels' aqui, pois os dados já têm o X embutido
+                datasets: [{
+                    label: 'Frequência (f)',
+                    data: dadosReais,
+                    borderColor: '#003366',
+                    backgroundColor: 'rgba(0, 51, 102, 0.1)',
+                    borderWidth: 3, 
+                    pointRadius: 6, 
+                    fill: true, 
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true, 
+                maintainAspectRatio: false,
+                scales: {
+                    x: { 
+                        type: 'linear', // A MÁGICA ACONTECE AQUI: Eixo X agora é numérico!
+                        title: { display: true, text: `Variável ${labelX}` } 
+                    },
+                    y: { title: { display: true, text: 'Frequência' } }
+                }
+            }
+        });
+    }
 
     function desenharGraficoPressao(xData, yData, labelX) {
         const ctx = document.getElementById('chart-press').getContext('2d');
-        
         if (chartPressInstance) chartPressInstance.destroy();
+
+        const dadosReais = xData.map((xVal, index) => ({ x: xVal, y: parseFloat(yData[index]) }));
 
         chartPressInstance = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: xData,
                 datasets: [{
                     label: 'Pressão (P)',
-                    data: yData,
+                    data: dadosReais,
                     borderColor: '#d9534f',
                     backgroundColor: 'rgba(217, 83, 79, 0.1)',
                     borderWidth: 3, 
@@ -166,7 +201,10 @@ function iniciarLaboratorioGraficos() {
                 responsive: true, 
                 maintainAspectRatio: false,
                 scales: {
-                    x: { title: { display: true, text: `Variável ${labelX}` } },
+                    x: { 
+                        type: 'linear',
+                        title: { display: true, text: `Variável ${labelX}` } 
+                    },
                     y: { title: { display: true, text: 'Pressão' } }
                 }
             }
