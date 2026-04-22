@@ -109,49 +109,17 @@ function iniciarLaboratorioGraficos() {
         desenharGraficoPressao(eixoX, eixoPressao, v);
     });
 
-
     function desenharGraficoFreq(xData, yData, labelX) {
         const ctx = document.getElementById('chart-freq').getContext('2d');
-        
-        // apaga o gráfico antigo antes de desenhar um novo (evita sobreposição)
         if (chartFreqInstance) chartFreqInstance.destroy();
 
-        chartFreqInstance = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: xData,
-                datasets: [{
-                    label: 'Frequência (f)',
-                    data: yData,
-                    borderColor: '#003366',
-                    backgroundColor: 'rgba(0, 51, 102, 0.1)',
-                    borderWidth: 3, 
-                    pointRadius: 6, 
-                    fill: true, 
-                    tension: 0.3
-                }]
-            },
-            options: {
-                responsive: true, 
-                maintainAspectRatio: false,
-                scales: {
-                    x: { title: { display: true, text: `Variável ${labelX}` } },
-                    y: { title: { display: true, text: 'Frequência' } }
-                }
-            }
-        });
-    }
-function desenharGraficoFreq(xData, yData, labelX) {
-        const ctx = document.getElementById('chart-freq').getContext('2d');
-        if (chartFreqInstance) chartFreqInstance.destroy();
-
-        // Une o X e o Y no formato de coordenadas reais: {x: 100, y: 7.8}
+       
         const dadosReais = xData.map((xVal, index) => ({ x: xVal, y: parseFloat(yData[index]) }));
 
         chartFreqInstance = new Chart(ctx, {
             type: 'line',
             data: {
-                // Não usamos mais 'labels' aqui, pois os dados já têm o X embutido
+                
                 datasets: [{
                     label: 'Frequência (f)',
                     data: dadosReais,
@@ -168,7 +136,7 @@ function desenharGraficoFreq(xData, yData, labelX) {
                 maintainAspectRatio: false,
                 scales: {
                     x: { 
-                        type: 'linear', // A MÁGICA ACONTECE AQUI: Eixo X agora é numérico!
+                        type: 'linear', /
                         title: { display: true, text: `Variável ${labelX}` } 
                     },
                     y: { title: { display: true, text: 'Frequência' } }
@@ -180,6 +148,7 @@ function desenharGraficoFreq(xData, yData, labelX) {
     function desenharGraficoPressao(xData, yData, labelX) {
         const ctx = document.getElementById('chart-press').getContext('2d');
         if (chartPressInstance) chartPressInstance.destroy();
+
 
         const dadosReais = xData.map((xVal, index) => ({ x: xVal, y: parseFloat(yData[index]) }));
 
@@ -202,7 +171,7 @@ function desenharGraficoFreq(xData, yData, labelX) {
                 maintainAspectRatio: false,
                 scales: {
                     x: { 
-                        type: 'linear',
+                        type: 'linear', 
                         title: { display: true, text: `Variável ${labelX}` } 
                     },
                     y: { title: { display: true, text: 'Pressão' } }
@@ -210,7 +179,7 @@ function desenharGraficoFreq(xData, yData, labelX) {
             }
         });
     }
-
+    
     setTimeout(() => { 
         if(btnPlot) btnPlot.click(); 
     }, 500); 
