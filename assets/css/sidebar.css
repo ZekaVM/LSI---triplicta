@@ -107,6 +107,12 @@ body.has-sidebar footer {
     background-color: rgba(246, 240, 245, 0.2);    
   }
 
+  .sidebar a {
+    white-space: normal;       /* allow line breaks */
+    word-break: break-word;    /* break long words if needed */
+    overflow-wrap: anywhere;   /* extra safety for small screens */
+  }
+
   .side-nav.active {
     transform: translateX(0);
   }
