@@ -56,11 +56,11 @@
   background-color: #FA8072;
 }
 
+/* show which page is active */
 .side-nav li a.active {
   background-color: #003366;
   color: white;
   font-weight: bold;
-  border-left: 4px solid #FA8072;
 }
 
 body.has-sidebar footer {
