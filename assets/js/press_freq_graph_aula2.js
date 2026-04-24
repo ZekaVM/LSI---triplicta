@@ -130,7 +130,7 @@ function iniciarLaboratorioGraficos() {
                     backgroundColor: 'rgba(0, 51, 102, 0.1)',
                     borderWidth: 3, 
                     pointRadius: 6, 
-                    fill: true, 
+                    fill: false, 
                     tension: 0.3
                 }]
             },
@@ -170,7 +170,7 @@ function iniciarLaboratorioGraficos() {
                     backgroundColor: 'rgba(217, 83, 79, 0.1)',
                     borderWidth: 3, 
                     pointRadius: 6, 
-                    fill: true, 
+                    fill: false, 
                     tension: 0.3
                 }]
             },
