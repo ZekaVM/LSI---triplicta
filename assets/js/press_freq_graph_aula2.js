@@ -163,7 +163,7 @@ function iniciarLaboratorioGraficos() {
             type: 'scatter', 
             data: {
                 datasets: [{
-                    label: 'Pressão (P)',
+                    label: 'Pressão (p)',
                     data: dadosReais,
                     showLine: true,  
                     borderColor: '#d9534f',
