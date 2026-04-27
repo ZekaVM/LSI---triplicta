@@ -14,6 +14,9 @@ title: Laboratório de Sistemas Interfaciais
 
 # Your name to show in the footer
 author: Filipe Lima
+# Configurações de URL do Fork
+url: "https://zekavm.github.io"
+baseurl: "/LSI---triplicta"
 
 ###############################################
 # --- List of links in the navigation bar --- #
