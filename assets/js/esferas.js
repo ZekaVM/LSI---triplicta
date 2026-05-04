@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
     particleRadius = sigmaEffective / 2;
     equilibriumStep = Math.floor(totalSteps * 0.20); // 20% do tempo para equilibrar
 
-    const R = 8.341;
+    const R = 1;
 
     let particlesAll = [[], [], []];
 
