@@ -2,16 +2,19 @@ document.addEventListener('DOMContentLoaded', function() {
   const container = document.getElementById('esferas-rigidas') || document.getElementById('aula-5-virtual-lab');
   if (!container) return;
 
-  // --- VARIÁVEIS GLOBAIS ---
-  let isCalculating = false;
-  let allSimsData = []; // Guardará os dados das 3 simulações
+  // --- VARIÁVEIS GLOBAIS DA TRIPLICATA ---
+  let historyX = [null, null, null];
+  let historyY = [null, null, null];
+  let historyR = [null, null, null];
+  let currentWallFreqData = [[], [], []];
+  let avgFreqs = [0, 0, 0];
   let simulationHistory = [];
 
-  // Reprodução Sincronizada
+  let totalSteps, numParticles, edgeLength, particleRadius, equilibriumStep;
+  let isCalculating = false;
   let isPlaying = false;
-  let currentFrameIdx = 0;
-  let exactFrame = 0;
-  let animId = null;
+  let currentFrame = 0;
+  let animationId = null;
 
   // Elementos DOM
   const btnRun = document.getElementById('btn-run');
@@ -34,212 +37,243 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('svg-freq-3')
   ];
 
-  // --- UTILS ---
-  function randomUniform(min, max) { return Math.random() * (max - min) + min; }
-  function gaussian(a, b, v) { return a * Math.exp(-b*(v**2)); }
-  function getSpeedColor(vx, vy, vmax) {
-    const speed = Math.hypot(vx, vy);
-    let ratio = speed / (vmax * 0.8);
-    if (ratio > 1) ratio = 1; 
-    const r = Math.round(255 * ratio);
-    const b = Math.round(255 * (1 - ratio));
-    return `rgb(${r}, 0, ${b})`;
+  // --- UTILS DE PERFORMANCE ---
+  function getVisualSpeedMultiplier(T) {
+    return Math.pow(T, 0.5) / 10;
   }
 
-  // --- CLASSE BOLA ---
-  class Bola {
-    constructor(radius, mass, x, y, vx, vy, color) {
-      this.radius = radius; this.mass = mass;
-      this.x = x; this.y = y; this.vx = vx; this.vy = vy; this.color = color;
-    }
-    advance(dt, edge, simRef) {
-      this.x += this.vx * dt; this.y += this.vy * dt;
-      if (this.x + this.radius >= edge) { this.x = edge - this.radius; this.vx *= -1; simRef.colisaoContador++; } 
-      if (this.x - this.radius <= 0) { this.x = this.radius; this.vx *= -1; simRef.colisaoContador++; }
-      if (this.y + this.radius >= edge) { this.y = edge - this.radius; this.vy *= -1; simRef.colisaoContador++; } 
-      if (this.y - this.radius <= 0) { this.y = this.radius; this.vy *= -1; simRef.colisaoContador++; }
-    }
+  // Substitui a lógica de fatias de probabilidade pesada
+  function randomGaussian() {
+    let u = 0, v = 0;
+    while(u === 0) u = Math.random();
+    while(v === 0) v = Math.random();
+    return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
   }
 
-  // --- SIMULAÇÃO ---
-  async function runSimulation() {
+  // --- INICIAR A SIMULAÇÃO ---
+  btnRun.addEventListener('click', () => {
     if (isCalculating) return;
     isCalculating = true;
 
-    const inputSigma = document.getElementById('inp-sigma');
-    const sigma = inputSigma ? parseFloat(inputSigma.value) : null;
+    numParticles = parseInt(document.getElementById("inp-n1").value);
+    const T = parseFloat(document.getElementById("inp-T").value);
+    const m = parseFloat(document.getElementById("inp-m1").value);
+    edgeLength = parseFloat(document.getElementById("inp-edge").value);
     
-    const params = {
-      n1: Number(document.getElementById('inp-n1').value),
-      r1: sigma !== null ? (sigma / 2.0) : Number(document.getElementById('inp-r1').value),
-      m1: Number(document.getElementById('inp-m1').value),
-      n2: Number(document.getElementById('inp-n2').value),
-      r2: Number(document.getElementById('inp-r2').value),
-      m2: Number(document.getElementById('inp-m2').value),
-      T: Number(document.getElementById('inp-T').value),
-      steps: Number(document.getElementById('inp-steps').value),
-      edge: Number(document.getElementById('inp-edge').value),
-      dt: Number(document.getElementById('inp-dt').value),
-      freqInterval: Number(document.getElementById('inp-freqInterval').value)
-    };
+    const inputSigma = document.getElementById('inp-sigma');
+    const sigmaEffective = inputSigma ? parseFloat(inputSigma.value) : 1.0;
+    const isHardSphereMode = !!inputSigma;
+    
+    const dt = parseFloat(document.getElementById("inp-dt")?.value || 0.005);
+    totalSteps = parseInt(document.getElementById("inp-steps")?.value || 15000);
+    
+    particleRadius = sigmaEffective / 2;
+    equilibriumStep = Math.floor(totalSteps * 0.20); // 20% do tempo para equilibrar
+
+    const boost = getVisualSpeedMultiplier(T);
+    const R = 8.314;
+
+    let particlesAll = [[], [], []];
+
+    // Prepara as 3 simulações
+    for (let sim = 0; sim < 3; sim++) {
+      // Aloca memória de alta velocidade (Typed Arrays)
+      historyX[sim] = new Float32Array(numParticles * totalSteps);
+      historyY[sim] = new Float32Array(numParticles * totalSteps);
+      historyR[sim] = new Uint8Array(numParticles * totalSteps);
+      currentWallFreqData[sim] = [];
+
+      // --- 1. INITIALIZATION ---
+      for (let i = 0; i < numParticles; i++) {
+        let p;
+        let overlap = true;
+        let attempts = 0;
+        
+        while (overlap && attempts < 2000) {
+          p = {
+            x: particleRadius + Math.random() * (edgeLength - sigmaEffective),
+            y: particleRadius + Math.random() * (edgeLength - sigmaEffective),
+            vx: randomGaussian(),
+            vy: randomGaussian()
+          };
+          
+          overlap = false;
+          if (isHardSphereMode && sigmaEffective > 0) {
+            for (let j = 0; j < particlesAll[sim].length; j++) {
+              let dx = p.x - particlesAll[sim][j].x;
+              let dy = p.y - particlesAll[sim][j].y;
+              if (dx*dx + dy*dy < sigmaEffective * sigmaEffective) {
+                overlap = true;
+                break;
+              }
+            }
+          }
+          attempts++;
+        }
+        particlesAll[sim].push(p);
+      }
+
+      // --- 2. TEMPERATURE SCALING ---
+      let vCMx = 0, vCMy = 0;
+      for (let p of particlesAll[sim]) { vCMx += p.vx; vCMy += p.vy; }
+      vCMx /= numParticles; vCMy /= numParticles;
+      for (let p of particlesAll[sim]) { p.vx -= vCMx; p.vy -= vCMy; }
+
+      let currentKinetic = 0;
+      for (let p of particlesAll[sim]) {
+        currentKinetic += 0.5 * m * (p.vx * p.vx + p.vy * p.vy);
+      }
+
+      let targetKinetic = numParticles * R * T;
+      let scaleFactor = Math.sqrt(targetKinetic / currentKinetic);
+
+      for (let p of particlesAll[sim]) {
+        p.vx *= scaleFactor * boost;
+        p.vy *= scaleFactor * boost;
+      }
+    }
 
     btnRun.disabled = true;
     btnRun.innerText = "Calculando...";
     uiProgress.style.display = 'block';
     uiVis.style.display = 'none';
-    
-    allSimsData = []; // Limpa os dados anteriores
-    
-    const k1 = 5.0;
-    const sigma1 = Math.sqrt(k1 * params.T / params.m1);
-    const vmaxHist = 3.5 * sigma1;
 
-    // LAÇO PRINCIPAL: RODAR 3 VEZES
-    for (let simIndex = 0; simIndex < 3; simIndex++) {
-      
-      let frames = []; 
-      let frequencyData = [{ step: 0, count: 0 }]; 
-      const particles = [];
-      const simObj = { colisaoContador: 0 }; 
+    let step = 0;
+    let intervalCollisions = [0, 0, 0];
+    let wallCollisionCount = [0, 0, 0];
+    const intervalSteps = 50; 
+    const maxExpectedV = Math.sqrt(R * T) * 1.5;
 
-      const placeParticles = (count, r, m, baseColor) => {
-        let placed = 0; let attempts = 0;
-        const maxAttempts = count * 2000;
-        const sigmaLocal = Math.sqrt(k1 * params.T / m);
-        const b = 1 / (sigmaLocal**2);
-        const a = Math.sqrt(b/Math.PI);
-        const vmax = 3*sigmaLocal; const vmin = -vmax;
-        const slices = 40; const window = (vmax - vmin)/slices;
-        const prob_wind = [];
+    // --- 3. SIMULATION LOOP (LAÇO OTIMIZADO) ---
+    function computeChunk() {
+      const chunkSize = 800;
+      const end = Math.min(step + chunkSize, totalSteps);
 
-        for (let i = 0; i < slices; i++) {        
-          const l_bound = vmin + i * window;
-          const u_bound = l_bound + window;
-          prob_wind.push((gaussian(a,b,u_bound) + gaussian(a,b,l_bound))*window/2);
+      for (; step < end; step++) {
+        let isEquilibrated = step >= equilibriumStep;
+
+        // Reseta os dados ao atingir o equilíbrio térmico
+        if (step === equilibriumStep) {
+          intervalCollisions = [0, 0, 0];
+          currentWallFreqData = [[], [], []];
         }
 
-        while (placed < count && attempts < maxAttempts) {
-          attempts++;
-          const x = Math.random() * (params.edge - 2*r) + r;
-          const y = Math.random() * (params.edge - 2*r) + r;
-          
-          let overlap = false;
-          for (let p of particles) {
-            if (Math.hypot(x - p.x, y - p.y) <= (r + p.radius)) { overlap = true; break; }
-          }
-          
-          if (!overlap) {
-            let vx, vy;
-            while (true) {
-              vx = randomUniform(vmin,vmax); vy = randomUniform(vmin,vmax);
-              const wx = Math.random(); const wy = Math.random();
-              let ix = Math.floor(((vx - vmin) / (vmax - vmin)) * slices);
-              let iy = Math.floor(((vy - vmin) / (vmax - vmin)) * slices);
-              ix = Math.max(0, Math.min(ix, slices - 1));
-              iy = Math.max(0, Math.min(iy, slices - 1));
-              if (wx <= prob_wind[ix] && wy <= prob_wind[iy]) break;
-            }    
-            particles.push(new Bola(r, m, x, y, vx, vy, baseColor));
-            placed++;
-          }
-        }
-      };
+        // Roda a física para as 3 simulações no mesmo passo de tempo
+        for (let sim = 0; sim < 3; sim++) {
+          let collisionsThisStep = 0;
+          let particles = particlesAll[sim];
 
-      // Coloca as partículas para esta instância específica
-      placeParticles(params.n1, params.r1, params.m1, '#4caf50');
-      
-      const chunkSize = 100; 
-      let lastCollisionCount = 0;
+          for (let i = 0; i < numParticles; i++) {
+            let p = particles[i];
+            p.x += p.vx * dt; p.y += p.vy * dt;
 
-      // O LOOP DE TEMPO DA FÍSICA
-      for (let step = 0; step < params.steps; step++) {
-        for (let p of particles) p.advance(params.dt, params.edge, simObj);
-        
-        for (let i = 0; i < particles.length; i++) {
-          for (let j = i + 1; j < particles.length; j++) {
-            const p1 = particles[i]; const p2 = particles[j];
-            const dx = p2.x - p1.x; const dy = p2.y - p1.y;
-            const dist = Math.hypot(dx, dy);
-            const sumRadius = p1.radius + p2.radius;
+            // Colisões com as Paredes (Usado para a Pressão)
+            if (p.x <= particleRadius) {
+              p.x = particleRadius; 
+              p.vx = Math.abs(p.vx); 
+              if (isEquilibrated) { collisionsThisStep++; wallCollisionCount[sim]++; }
+            } else if (p.x >= edgeLength - particleRadius) {
+              p.x = edgeLength - particleRadius; 
+              p.vx = -Math.abs(p.vx); 
+              if (isEquilibrated) { collisionsThisStep++; wallCollisionCount[sim]++; }
+            }
 
-            if (dist <= sumRadius) {
-               const safeDist = dist === 0 ? 1e-8 : dist;
-               const theta = Math.atan2(dy, dx);
-               const vn1 = Math.cos(theta) * p1.vx + Math.sin(theta) * p1.vy;
-               const vn2 = Math.cos(theta) * p2.vx + Math.sin(theta) * p2.vy;
-               const vt1 = -Math.sin(theta) * p1.vx + Math.cos(theta) * p1.vy;
-               const vt2 = -Math.sin(theta) * p2.vx + Math.cos(theta) * p2.vy;
-               
-               const un1 = ((p1.mass - p2.mass) * vn1 + 2 * p2.mass * vn2) / (p1.mass + p2.mass);
-               const un2 = ((p2.mass - p1.mass) * vn2 + 2 * p1.mass * vn1) / (p1.mass + p2.mass);
-               
-               p1.vx = Math.cos(theta) * un1 - Math.sin(theta) * vt1;
-               p1.vy = Math.sin(theta) * un1 + Math.cos(theta) * vt1;
-               p2.vx = Math.cos(theta) * un2 - Math.sin(theta) * vt2;
-               p2.vy = Math.sin(theta) * un2 + Math.cos(theta) * vt2;
+            if (p.y <= particleRadius) {
+              p.y = particleRadius; 
+              p.vy = Math.abs(p.vy); 
+              if (isEquilibrated) { collisionsThisStep++; wallCollisionCount[sim]++; }
+            } else if (p.y >= edgeLength - particleRadius) {
+              p.y = edgeLength - particleRadius; 
+              p.vy = -Math.abs(p.vy); 
+              if (isEquilibrated) { collisionsThisStep++; wallCollisionCount[sim]++; }
+            }
 
-               const overlap = sumRadius - safeDist;
-               if (overlap > 0) {
-                 p1.x -= (dx / safeDist) * (overlap / 2); p1.y -= (dy / safeDist) * (overlap / 2);
-                 p2.x += (dx / safeDist) * (overlap / 2); p2.y += (dy / safeDist) * (overlap / 2);
-               }
+            // Colisões entre Partículas (Otimizado com Produto Escalar)
+            if (isHardSphereMode && sigmaEffective > 0) {
+              for (let j = i + 1; j < numParticles; j++) {
+                let p2 = particles[j];
+                let dx = p.x - p2.x; 
+                let dy = p.y - p2.y;
+                let distSq = dx*dx + dy*dy;
+                
+                if (distSq < sigmaEffective * sigmaEffective) {
+                  let dvx = p.vx - p2.vx;
+                  let dvy = p.vy - p2.vy;
+                  
+                  if (dx * dvx + dy * dvy < 0) {
+                    let dotProduct = (dx * dvx + dy * dvy) / distSq;
+                    p.vx -= dotProduct * dx;
+                    p.vy -= dotProduct * dy;
+                    p2.vx += dotProduct * dx;
+                    p2.vy += dotProduct * dy;
+                  }
+                }
+              }
             }
           }
-        }
-        
-        const stride = Math.max(1, Math.floor(params.steps / 1000));
-        
-        // Salva os frames para o Canvas
-        if (step % stride === 0 || step === params.steps - 1) {
-          frames.push(particles.map(p => ({ x: p.x, y: p.y, r: p.radius, c: getSpeedColor(p.vx, p.vy, vmaxHist) })));
-        }
 
-        // Frequência de Colisões
-        if (step > 0 && step % params.freqInterval === 0) {
-          frequencyData.push({ step, count: simObj.colisaoContador - lastCollisionCount });
-          lastCollisionCount = simObj.colisaoContador;
-        }
+          // Registro de Frequência para o Gráfico
+          if (isEquilibrated) {
+            intervalCollisions[sim] += collisionsThisStep;
+            let equilibratedStep = step - equilibriumStep;
+            if ((equilibratedStep + 1) % intervalSteps === 0) {
+              let freqHz = intervalCollisions[sim] / (intervalSteps * dt);
+              // Salva o passo real para o gráfico renderizar certinho
+              currentWallFreqData[sim].push({ step: step, count: freqHz });
+              intervalCollisions[sim] = 0;
+            }
+          }
 
-        // Atualiza a barra de progresso Global (0 a 100% cobrindo as 3 sims)
-        if (step % chunkSize === 0) {
-          const totalStepsGlobal = params.steps * 3;
-          const currentStepGlobal = (simIndex * params.steps) + step;
-          const p = (currentStepGlobal / totalStepsGlobal) * 100;
-          progText.innerText = `Progresso: ${p.toFixed(1)}% (Calculando Simulação ${simIndex + 1}/3)`;
-          await new Promise(r => setTimeout(r, 0)); // Evita travamento da UI
+          // Gravação na Memória de Alta Velocidade
+          let offset = step * numParticles;
+          for (let i = 0; i < numParticles; i++) {
+            let p = particles[i];
+            historyX[sim][offset+i] = p.x;
+            historyY[sim][offset+i] = p.y;
+
+            let vFisicaInstantanea = Math.sqrt(p.vx**2 + p.vy**2) / boost;
+            let ratio = Math.min(1, vFisicaInstantanea / maxExpectedV);
+            historyR[sim][offset + i] = Math.round(ratio * 255);
+          }
         }
       }
-
-      // Calcula a média dos 80% finais para esta simulação específica
-      let avg = 0; 
-      if (frequencyData && frequencyData.length > 5) {
-        const startIdx = Math.floor(frequencyData.length * 0.2);
-        const last80 = frequencyData.slice(startIdx);
-        const sum = last80.reduce((acc, d) => acc + d.count, 0);
-        avg = sum / last80.length;
+      
+      const pct = Math.floor((step/totalSteps)*100);
+      if (step < equilibriumStep) {
+        progText.innerText = `Termalizando o sistema: ${pct}%`;
+      } else {
+        progText.innerText = `Calculando as 3 simulações: ${pct}%`;
       }
 
-      // Salva tudo no array global
-      allSimsData.push({
-        frames: frames,
-        frequencyData: frequencyData,
-        avgFreq: avg
-      });
+      // Permite que o navegador respire antes de calcular o próximo bloco
+      if (step < totalSteps) setTimeout(computeChunk, 0);
+      else finishSimulation(wallCollisionCount, dt, T, m, sigmaEffective);
+    }
+    computeChunk();
+  });
+
+  // --- FINALIZAÇÃO E HISTÓRICO ---
+  function finishSimulation(wallCollisionCount, dt, T, m, sigmaEffective) {
+    uiProgress.style.display = "none";
+    btnRun.disabled = false;
+    btnRun.innerText = "Recalcular Novas 3 Simulações";
+    uiVis.style.display = "flex";
+    isCalculating = false;
+    
+    if (scrubber) { scrubber.max = totalSteps - 1; scrubber.value = 0; }
+    
+    const activeTime = (totalSteps - equilibriumStep) * dt; 
+    
+    // Calcula as médias das 3
+    for(let sim = 0; sim < 3; sim++) {
+        avgFreqs[sim] = wallCollisionCount[sim] / activeTime;
     }
 
-    // --- PÓS-CÁLCULO E HISTÓRICO ---
-    const currentN = params.n1;
-    const currentT = params.T;
-    const currentM = params.m1;
-    const currentL = params.edge;
-    const currentSigma = sigma;
-
-    // Adiciona ao histórico os 3 f encontrados
     simulationHistory.unshift({
-      n: currentN, t: currentT, m: currentM, l: currentL, sigma: currentSigma,
-      f1: isNaN(allSimsData[0].avgFreq) ? '--' : allSimsData[0].avgFreq.toFixed(2),
-      f2: isNaN(allSimsData[1].avgFreq) ? '--' : allSimsData[1].avgFreq.toFixed(2),
-      f3: isNaN(allSimsData[2].avgFreq) ? '--' : allSimsData[2].avgFreq.toFixed(2)
+      n: numParticles, t: T, m: m, l: edgeLength, sigma: sigmaEffective,
+      f1: isNaN(avgFreqs[0]) ? '--' : avgFreqs[0].toFixed(2),
+      f2: isNaN(avgFreqs[1]) ? '--' : avgFreqs[1].toFixed(2),
+      f3: isNaN(avgFreqs[2]) ? '--' : avgFreqs[2].toFixed(2)
     });
 
     if (simulationHistory.length > 3) simulationHistory.pop();
@@ -260,102 +294,81 @@ document.addEventListener('DOMContentLoaded', function() {
       }).join('');
     }
 
-    isCalculating = false;
-    btnRun.disabled = false;
-    btnRun.innerText = "Recalcular Novas 3 Simulações";
-    uiProgress.style.display = 'none';
-    uiVis.style.display = 'flex';
-    
-    // Configura o Scrubber com base no tamanho dos frames da primeira simulação (todas têm o mesmo tamanho)
-    scrubber.max = allSimsData[0].frames.length - 1;
-    currentFrameIdx = 0;
-    exactFrame = 0;
-    
+    currentFrame = 0;
     drawFrame(0);
-    updateCharts(0, params.steps);
-  } 
+    updateCharts(0, totalSteps);
+  }
 
-  // --- DESENHO EM TRIPLICATA ---
+  // --- RENDERIZAÇÃO DE FRAMES (LEITURA RÁPIDA) ---
   function drawFrame(idx) {
-    const edge = Number(document.getElementById('inp-edge').value);
-    
-    // Loop nas 3 telas
-    for (let i = 0; i < 3; i++) {
-      const ctx = canvasCtxs[i];
-      if (!ctx || !allSimsData[i] || !allSimsData[i].frames[idx]) continue;
-      
-      const canvas = ctx.canvas;
-      const scale = canvas.width / edge;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const scale = canvasCtxs[0].canvas.width / edgeLength;
+    const offset = idx * numParticles;
 
-      for (let p of allSimsData[i].frames[idx]) {
-        const drawRadius = p.r === 0 ? 0.5 : p.r;
+    for (let sim = 0; sim < 3; sim++) {
+      const ctx = canvasCtxs[sim];
+      if (!ctx || !historyX[sim]) continue;
+      
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+      for (let i = 0; i < numParticles; i++) {
+        // A cor agora é tirada do Uint8Array (historyR) mapeada para um gradiente vermelho-azul
+        const redVal = historyR[sim][offset+i];
+        ctx.fillStyle = `rgb(${redVal}, 60, 100)`;
+        
         ctx.beginPath();
-        ctx.arc(p.x * scale, (edge - p.y) * scale, drawRadius * scale, 0, Math.PI * 2);
-        ctx.fillStyle = p.c; ctx.fill();
+        // Inversão do eixo Y opcional: se quiser manter o Y crescendo pra baixo igual o do seu prof, remova "(edgeLength - )"
+        ctx.arc(historyX[sim][offset+i] * scale, historyY[sim][offset+i] * scale, particleRadius * scale, 0, Math.PI * 2);
+        ctx.fill();
         ctx.lineWidth = 0.5; ctx.strokeStyle = '#333'; ctx.stroke();
       }
     }
   }
 
-  // Animação Mestra
-  function playLoop() {
-    const scaleV = document.getElementById('inp-scaleV').checked;
-    const T = Number(document.getElementById('inp-T').value);
-    const speedFactor = scaleV ? Math.sqrt(Math.max(1, T) / 1000) : 1.0;
+  // --- CONTROLE DE ANIMAÇÃO ---
+  if (btnPlay) {
+    btnPlay.onclick = () => {
+      isPlaying = !isPlaying;
+      btnPlay.innerText = isPlaying ? "Pausar" : "Reproduzir";
+      
+      if(isPlaying) {
+        btnPlay.classList.remove('jsbox-btn-success');
+        btnPlay.classList.add('jsbox-btn-warning');
+        animate();
+      } else {
+        btnPlay.classList.remove('jsbox-btn-warning');
+        btnPlay.classList.add('jsbox-btn-success');
+      }
+    };
+  }
+
+  function animate() {
+    if(!isPlaying) return;
+    currentFrame += 5; // Pula de 5 em 5 frames para ficar visualmente fluido
+    if(currentFrame >= totalSteps) { 
+      currentFrame = 0; 
+      isPlaying = false; 
+      btnPlay.innerText = "Reproduzir"; 
+      btnPlay.classList.remove('jsbox-btn-warning');
+      btnPlay.classList.add('jsbox-btn-success');
+      return; 
+    }
     
-    const maxFrames = allSimsData[0].frames.length;
-
-    if (exactFrame < maxFrames - 1) {
-      exactFrame += speedFactor;
-      if (exactFrame >= maxFrames - 1) { exactFrame = maxFrames - 1; isPlaying = false; }
-      
-      currentFrameIdx = Math.floor(exactFrame);
-      scrubber.value = currentFrameIdx;
-      drawFrame(currentFrameIdx);
-      updateCharts(currentFrameIdx, Number(document.getElementById('inp-steps').value));
-      
-      if (isPlaying) animId = requestAnimationFrame(playLoop);
-      else { resetPlayBtn(); }
-    } else {
-      isPlaying = false;
-      resetPlayBtn();
-    }
+    if(scrubber) scrubber.value = currentFrame;
+    drawFrame(currentFrame);
+    updateCharts(currentFrame, totalSteps);
+    requestAnimationFrame(animate);
   }
 
-  function resetPlayBtn() {
-    btnPlay.innerText = 'Reproduzir';
-    btnPlay.classList.remove('jsbox-btn-warning');
-    btnPlay.classList.add('jsbox-btn-success');
+  if (scrubber) {
+    scrubber.oninput = () => { 
+      currentFrame = parseInt(scrubber.value); 
+      drawFrame(currentFrame); 
+      updateCharts(currentFrame, totalSteps);
+    };
   }
-
-  btnPlay.addEventListener('click', () => {
-    if (isPlaying) {
-      cancelAnimationFrame(animId);
-      isPlaying = false;
-      resetPlayBtn();
-    } else {
-      isPlaying = true;
-      btnPlay.innerText = 'Pausar';
-      btnPlay.classList.remove('jsbox-btn-success');
-      btnPlay.classList.add('jsbox-btn-warning');
-      
-      const maxFrames = allSimsData[0].frames.length;
-      if (currentFrameIdx >= maxFrames - 1) { currentFrameIdx = 0; exactFrame = 0; }
-      else { exactFrame = currentFrameIdx; }
-      playLoop();
-    }
-  });
-
-  scrubber.addEventListener('input', (e) => {
-    currentFrameIdx = Number(e.target.value);
-    exactFrame = currentFrameIdx;
-    drawFrame(currentFrameIdx);
-    updateCharts(currentFrameIdx, Number(document.getElementById('inp-steps').value));
-  });
 
   // --- RENDERIZAÇÃO DOS 3 GRÁFICOS (SVG) ---
-  function updateCharts(fIdx, totalSteps) {
+  function updateCharts(fIdx, tSteps) {
     const drawAxes = (maxY) => {
       let html = `
         <line x1="60" y1="300" x2="600" y2="300" stroke="#ccc" />
@@ -367,7 +380,7 @@ document.addEventListener('DOMContentLoaded', function() {
       for (let i = 0; i <= 5; i++) {
         let x = 60 + (i / 5) * 540;
         html += `<line x1="${x}" y1="300" x2="${x}" y2="305" stroke="#aaa" />
-                 <text x="${x}" y="320" text-anchor="middle" font-size="11" fill="#666">${Math.round((totalSteps/5)*i)}</text>`;
+                 <text x="${x}" y="320" text-anchor="middle" font-size="11" fill="#666">${Math.round((tSteps/5)*i)}</text>`;
       }
       return html;
     };
@@ -376,21 +389,17 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!data || !data.length) return "";
       let d = `M 60 ${300 - (data[0].count / maxYRef) * 280}`;
       for (let point of data) {
-        d += ` L ${60 + (point.step / totalSteps) * 540} ${300 - (point.count / maxYRef) * 280}`;
+        d += ` L ${60 + (point.step / tSteps) * 540} ${300 - (point.count / maxYRef) * 280}`;
       }
       return d;
     };
 
-    // Atualiza os 3 SVGs
     for (let i = 0; i < 3; i++) {
       const svg = svgFreqs[i];
-      if (!svg || !allSimsData[i]) continue;
+      if (!svg || currentWallFreqData[i].length === 0) continue;
 
-      const simData = allSimsData[i].frequencyData;
-      
-      // Filtra o passo atual com base no fIdx
-      const maxRenderStep = (fIdx / (allSimsData[i].frames.length - 1)) * totalSteps;
-      const curFreq = simData.filter(d => d.step <= maxRenderStep);
+      const simData = currentWallFreqData[i];
+      const curFreq = simData.filter(d => d.step <= fIdx);
       
       const maxFreq = simData.length > 1 ? Math.max(...simData.map(d => d.count)) : 0;
       const frequencyMaxY = maxFreq > 0 ? maxFreq * 1.1 : 10;
@@ -399,15 +408,16 @@ document.addEventListener('DOMContentLoaded', function() {
       freqHTML += `<path d="${createPathStr(curFreq, frequencyMaxY)}" fill="none" stroke="#ff9800" stroke-width="2" />`;
       
       // Linha de média
-      let avgY = 300 - (allSimsData[i].avgFreq / frequencyMaxY) * 280;
+      let avgY = 300 - (avgFreqs[i] / frequencyMaxY) * 280;
+      // Impede que a linha de média fuja do limite do SVG
+      avgY = Math.max(20, Math.min(300, avgY));
+      
       freqHTML += `<line x1="60" y1="${avgY}" x2="600" y2="${avgY}" stroke="#d9534f" stroke-width="2" stroke-dasharray="5,5" opacity="0.7"/>`;
-      freqHTML += `<text x="595" y="${avgY - 5}" text-anchor="end" font-size="12" fill="#d9534f" font-weight="bold">f = ${allSimsData[i].avgFreq.toFixed(2)}</text>`;
+      freqHTML += `<text x="595" y="${avgY - 5}" text-anchor="end" font-size="12" fill="#d9534f" font-weight="bold">f = ${avgFreqs[i].toFixed(2)}</text>`;
       
       svg.innerHTML = freqHTML;
     }
   }
-
-  btnRun.addEventListener('click', runSimulation);
 
   // BOTÃO DE LIMPAR HISTÓRICO
   const btnClearHistory = document.getElementById('btn-clear-history');
