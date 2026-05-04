@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const R = 8.341;
 
-    let particlesAll = [[], [], []];Document.querySelectorAll(".toolbox").forEach(box => {
+    let particlesAll = [[], [], []];
         if (box.id !== "gas-ideal-tool") return;
 
     // Prepara as 3 simulações
@@ -424,4 +424,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
-}
+
