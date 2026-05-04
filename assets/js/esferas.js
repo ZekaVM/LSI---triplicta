@@ -37,11 +37,6 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('svg-freq-3')
   ];
 
-  // --- UTILS DE PERFORMANCE ---
-  function getVisualSpeedMultiplier(T) {
-    return Math.pow(T, 0.5) / 10;
-  }
-
   // Substitui a lógica de fatias de probabilidade pesada
   function randomGaussian() {
     let u = 0, v = 0;
@@ -70,10 +65,10 @@ document.addEventListener('DOMContentLoaded', function() {
     particleRadius = sigmaEffective / 2;
     equilibriumStep = Math.floor(totalSteps * 0.20); // 20% do tempo para equilibrar
 
-    const boost = getVisualSpeedMultiplier(T);
-    const R = 8.314;
+    const R = 8.341;
 
-    let particlesAll = [[], [], []];
+    let particlesAll = [[], [], []];Document.querySelectorAll(".toolbox").forEach(box => {
+        if (box.id !== "gas-ideal-tool") return;
 
     // Prepara as 3 simulações
     for (let sim = 0; sim < 3; sim++) {
@@ -128,8 +123,8 @@ document.addEventListener('DOMContentLoaded', function() {
       let scaleFactor = Math.sqrt(targetKinetic / currentKinetic);
 
       for (let p of particlesAll[sim]) {
-        p.vx *= scaleFactor * boost;
-        p.vy *= scaleFactor * boost;
+        p.vx *= scaleFactor;
+        p.vy *= scaleFactor;
       }
     }
 
@@ -231,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
             historyX[sim][offset+i] = p.x;
             historyY[sim][offset+i] = p.y;
 
-            let vFisicaInstantanea = Math.sqrt(p.vx**2 + p.vy**2) / boost;
+            let vFisicaInstantanea = Math.sqrt(p.vx**2 + p.vy**2);
             let ratio = Math.min(1, vFisicaInstantanea / maxExpectedV);
             historyR[sim][offset + i] = Math.round(ratio * 255);
           }
